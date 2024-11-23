@@ -3,6 +3,7 @@ import sellerModel from "../model/seller.js";
 import crypto from 'crypto'
 import nodemailer from "nodemailer"
 import productModel from "../model/product.js"
+import cartModel from "../model/cart.js";
 
 const signup = async(req,res)=>{
     try {
@@ -168,6 +169,90 @@ const getCart = async(req,res)=>{
         })
     }
 }
+const getProductById = async (req, res) => {
+    try {
+        
+        let product = await productModel.findOne({_id:req.params.id});
+
+        if (!product) {
+            return res.status(404).send({
+                message: "Product not found"
+            });
+        }
+        await cartModel.create({
+            email:product.email,
+            product:product.product,
+            cost:product.cost,
+            image:product.image
+        })
+        res.status(200).send({
+            message: "Product added to cart successfully",
+        });
+    } catch (error) {
+        res.status(500).send({
+            message: error.message || "Internal Server Error"
+        });
+    }
+};
+
+const getMyCart = async (req, res) => {
+    try {
+        let product = await cartModel.find({})
+        res.status(201).send(product)
+    } catch (error) {
+        res.status(500).send({
+            message:error.message||"internal error"
+        })
+    }
+}
+const deleteById = async (req,res) =>{
+
+    try {
+        let del = await cartModel.deleteOne({_id:req.params.id})
+        res.status(200).send({
+            message: "Product deleted from cart successfully",
+        });
+    } catch (error) {
+        res.status(500).send({
+            message:error.message||"internal error"
+        })
+    }
+}
+
+const totalCost = async (req, res) => {
+    try {
+       
+        const result = await cartModel.aggregate([
+            {
+                $group: {
+                    _id: null,
+                    totalAmount: { $sum: "$cost" }, 
+                    totalCount: { $sum: 1 } 
+                }
+            }
+        ]);
+
+        if (result.length === 0) {
+            return res.status(404).send({
+                message: "No products found to calculate total cost."
+            });
+        }
+
+        res.status(200).send({
+            message: "Total cost calculated successfully",
+            totalAmount: result[0].totalAmount,
+            totalCount: result[0].totalCount 
+        });
+
+    } catch (error) {
+        res.status(500).send({
+            message: error.message || "Internal error"
+        });
+    }
+}
+
+
+  
 
 export default{
     signup,
@@ -175,5 +260,9 @@ export default{
     forgetPassword,
     resetPassword,
     addCart,
-    getCart
+    getCart,
+    getProductById,
+    getMyCart,
+    deleteById,
+    totalCost
 }

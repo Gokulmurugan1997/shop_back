@@ -170,5 +170,5 @@ export default {
     login,
     forgetPassword,
     resetPassword,
-    editUserById
+    editUserById,
 }

@@ -11,5 +11,9 @@ router.post('/forgetpassword', sellerController.forgetPassword)
 router.post('/resetpass', sellerController.resetPassword)
 router.post('/addcart', sellerController.addCart)
 router.get('/getcart', sellerController.getCart)
+router.get('/cart', sellerController.getMyCart)
+router.get('/:id', sellerController.getProductById)
+router.delete('/:id', sellerController.deleteById)
+router.get('/', sellerController.totalCost)
 
 export default router
