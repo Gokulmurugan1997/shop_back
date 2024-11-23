@@ -251,7 +251,19 @@ const totalCost = async (req, res) => {
     }
 }
 
+const deleteAll = async (req,res) =>{
 
+    try {
+        let del = await cartModel.deleteMany({})
+        res.status(200).send({
+            message: "Cart deleted",
+        });
+    } catch (error) {
+        res.status(500).send({
+            message:error.message||"internal error"
+        })
+    }
+}
   
 
 export default{
@@ -264,5 +276,6 @@ export default{
     getProductById,
     getMyCart,
     deleteById,
-    totalCost
+    totalCost,
+    deleteAll
 }

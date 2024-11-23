@@ -13,7 +13,9 @@ router.post('/addcart', sellerController.addCart)
 router.get('/getcart', sellerController.getCart)
 router.get('/cart', sellerController.getMyCart)
 router.get('/:id', sellerController.getProductById)
+router.delete('/cart', sellerController.deleteAll)
 router.delete('/:id', sellerController.deleteById)
 router.get('/', sellerController.totalCost)
+
 
 export default router
